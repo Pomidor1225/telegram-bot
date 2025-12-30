@@ -245,11 +245,13 @@ def is_similar(word1, word2):
                 i += 1
             elif len(word2) > len(word1):
                 j += 1
-else:
+            else:
                 i += 1
                 j += 1
 
     return True
+
+
 
 async def handle_message(update, context):
     text = update.message.text.lower()
@@ -355,7 +357,7 @@ async def handle_message(update, context):
             return
 
     # Шанс ответа 70%
-    if random.random() > 0.88:
+    if random.random() > 0.7:
         return
 
     await update.message.reply_text(random.choice(RANDOM_PHRASES))
@@ -371,6 +373,7 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
 
 
