@@ -212,13 +212,13 @@ async def handle_message(update, context):
     text = update.message.text.lower()
      # ================== ПАСХАЛКИ ==================
 
-    # 1. 🍅 реакция на "помидор"
+    # 1. 🤯 реакция на "помидор"
     if "помидор" in text:
         try:
             await context.bot.set_message_reaction(
                 chat_id=update.effective_chat.id,
                 message_id=update.message.message_id,
-                reaction=["🍅"]
+                reaction=["🤯"]
             )
         except:
             pass  # если реакции недоступны — просто молчим
@@ -246,6 +246,23 @@ async def handle_message(update, context):
     # 6. "пупсик"
     if "пупсик" in text:
         await update.message.reply_text("главный пупсик здесь я")
+        return
+
+    # ================== ДОП ПАСХАЛКИ ==================
+
+    clean_text = text.strip()
+
+    # 1. Контракт (ТОЧНОЕ СООБЩЕНИЕ)
+    if clean_text in ["contract", "контракт", "со", "co"]:
+        await update.message.reply_text(
+            "$VSPACE : EQAOL6ScfHq7B0IRSpVuzxZQ4W3jjrppgRFzWT7kUljbMs_v"
+        )
+        return
+
+    # 2. "привет медвед молодёжь" — шанс 11.25%
+    if "привет медвед молодёжь" in text:
+        if random.random() < 0.1125:
+            await update.message.reply_text("дарова плесень")
         return
 
     chat = update.effective_chat
@@ -285,4 +302,5 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
