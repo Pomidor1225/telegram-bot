@@ -208,6 +208,49 @@ async def start_command(update, context):
 
     await update.message.reply_text(START_TEXT)
 
+def normalize_word(word):
+    endings = [
+        "ами", "ями", "ого", "ему", "ыми", "ими",
+        "ить", "ать", "ять", "нуть",
+        "ился", "илась", "ились",
+        "ил", "ила", "или",
+        "нул", "нула", "нуло",
+        "а", "я", "ы", "и", "е", "о", "у",
+        "ов", "ев", "ей",
+        "ый", "ий", "ая", "ое", "ее"
+    ]
+
+    for ending in endings:
+        if word.endswith(ending) and len(word) > len(ending) + 2:
+            return word[:-len(ending)]
+
+    return word
+
+def is_similar(word1, word2):
+    if abs(len(word1) - len(word2)) > 1:
+        return False
+
+    mismatches = 0
+    i = j = 0
+
+    while i < len(word1) and j < len(word2):
+        if word1[i] == word2[j]:
+            i += 1
+            j += 1
+        else:
+            mismatches += 1
+            if mismatches > 1:
+                return False
+            if len(word1) > len(word2):
+                i += 1
+            elif len(word2) > len(word1):
+                j += 1
+else:
+                i += 1
+                j += 1
+
+    return True
+
 async def handle_message(update, context):
     text = update.message.text.lower()
      # ================== ПАСХАЛКИ ==================
@@ -274,9 +317,35 @@ async def handle_message(update, context):
     text = update.message.text.lower()
 
     # Проверка на триггеры
-    if not any(word in text for word in COMPLEX_WORDS):
-        return
 
+   words_in_message = text.split()
+
+trigger_found = False
+
+for msg_word in words_in_message:
+    for trigger_word in COMPLEX_WORDS:
+
+        # короткие слова — только точное совпадение
+        if len(trigger_word) <= 5:
+            if msg_word == trigger_word:
+                trigger_found = True
+                break
+
+        # длинные слова — без окончаний + 1 ошибка
+        else:
+            if is_similar(
+                normalize_word(msg_word),
+                normalize_word(trigger_word)
+            ):
+                trigger_found = True
+                break
+
+    if trigger_found:
+        break
+
+if not trigger_found:
+    return
+    
     chat_id = chat.id
     now = time.time()
 
@@ -302,5 +371,6 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
 
