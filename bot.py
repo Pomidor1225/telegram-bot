@@ -1,22 +1,23 @@
-from telegram.ext import ApplicationBuilder, MessageHandler, filters
+import os
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters
 import random
 import time
 
-BOT_TOKEN = "8556098152:AAE988kjmkoL7TUHwsLu6xSoAbWtMXEp7MA"
-START_TEXT = """Привет . Я бот от команды VV . Плохо понимаю в криптотерминах .
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+START_TEXT = """Привет, я бот от команды VV. Плохо понимаю в криптотерминах.
 
 Основные ссылки:
 
-Основной канал - @Pipromems
+Основной канал — @Pipromems
 
-Основной чат - @liguemems
+Основной чат — @liguemems
 
-Hub 18+ - https://t.me/+jTET-PYrLekzMGMy
+Hub 18+ — https://t.me/+jTET-PYrLekzMGMy
 
-Чат $VSPACE - https://t.me/+k7PHJiaLbLVhOGZi
+Чат $VSPACE — https://t.me/+k7PHJiaLbLVhOGZi
 
-Приятного погружения в экосистему"""
+Приятного погружения в экосистему
+"""
 
 # ================== СЛОВА-ТРИГГЕРЫ ==================
 
@@ -242,5 +243,6 @@ app = ApplicationBuilder().token(BOT_TOKEN).build()
 
 app.add_handler(CommandHandler("start", start_command))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
 
 app.run_polling()
