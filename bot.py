@@ -318,33 +318,33 @@ async def handle_message(update, context):
 
     # Проверка на триггеры
 
-   words_in_message = text.split()
+    words_in_message = text.split()
+    trigger_found = False
 
-trigger_found = False
+    for msg_word in words_in_message:
+        for trigger_word in COMPLEX_WORDS:
 
-for msg_word in words_in_message:
-    for trigger_word in COMPLEX_WORDS:
+            # короткие слова — только точное совпадение
+            if len(trigger_word) <= 5:
+                if msg_word == trigger_word:
+                    trigger_found = True
+                    break
 
-        # короткие слова — только точное совпадение
-        if len(trigger_word) <= 5:
-            if msg_word == trigger_word:
-                trigger_found = True
-                break
+            # длинные слова — без окончаний + 1 ошибка
+            else:
+                if is_similar(
+                    normalize_word(msg_word),
+                    normalize_word(trigger_word)
+                ):
+                    trigger_found = True
+                    break
 
-        # длинные слова — без окончаний + 1 ошибка
-        else:
-            if is_similar(
-                normalize_word(msg_word),
-                normalize_word(trigger_word)
-            ):
-                trigger_found = True
-                break
+        if trigger_found:
+            break
 
-    if trigger_found:
-        break
-
-if not trigger_found:
-    return
+    if not trigger_found:
+        return
+        
     
     chat_id = chat.id
     now = time.time()
@@ -355,7 +355,7 @@ if not trigger_found:
             return
 
     # Шанс ответа 70%
-    if random.random() > 0.7:
+    if random.random() > 0.88:
         return
 
     await update.message.reply_text(random.choice(RANDOM_PHRASES))
@@ -371,6 +371,7 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
 
 
