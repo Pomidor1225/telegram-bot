@@ -209,6 +209,45 @@ async def start_command(update, context):
     await update.message.reply_text(START_TEXT)
 
 async def handle_message(update, context):
+    text = update.message.text.lower()
+     # ================== ПАСХАЛКИ ==================
+
+    # 1. 🍅 реакция на "помидор"
+    if "помидор" in text:
+        try:
+            await context.bot.set_message_reaction(
+                chat_id=update.effective_chat.id,
+                message_id=update.message.message_id,
+                reaction=["🍅"]
+            )
+        except:
+            pass  # если реакции недоступны — просто молчим
+            
+            # 2. "помидорас"
+    if "помидорас" in text:
+        await update.message.reply_text("Сам ты помидорас")
+        return
+
+    # 3. "соси"
+    if "соси" in text:
+        await update.message.reply_text("а соси соси мне за 5$ не сделаешь?")
+        return
+
+    # 4. "шнеле"
+    if "шнеле" in text:
+        await update.message.reply_text("фо вотафо")
+        return
+        
+        # 5. "гениальный токен"
+    if "гениальный токен" in text:
+        await update.message.reply_text("pepemp3")
+        return
+
+    # 6. "пупсик"
+    if "пупсик" in text:
+        await update.message.reply_text("главный пупсик здесь я")
+        return
+
     chat = update.effective_chat
 
     # Только группы
@@ -246,3 +285,4 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
