@@ -4,19 +4,26 @@ import random
 import time
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-START_TEXT = """Привет, я бот от команды VV. Плохо понимаю в криптотерминах.
+START_TEXT = """================================
+VV SYSTEM BOT
+================================
+Здравствуйте.
+Я бот команды VV.
+Если вы не знакомы с криптотерминами — это не проблема.
+Информация представлена в упрощённом формате.
 
-Основные ссылки:
+--------------------------------
+ОСНОВНЫЕ ССЫЛКИ
+--------------------------------
+Основной канал: @Pipromems
+Основной чат:   @liguemems
+Hub 18+:        https://t.me/+jTET-PYrLekzMGMy
+Чат $VSPACE:    https://t.me/+k7PHJiaLbLVhOGZi
 
-Основной канал — @Pipromems
+================================
+Добро пожаловать в экосистему VV.
+================================
 
-Основной чат — @liguemems
-
-Hub 18+ — https://t.me/+jTET-PYrLekzMGMy
-
-Чат $VSPACE — https://t.me/+k7PHJiaLbLVhOGZi
-
-Приятного погружения в экосистему
 """
 
 # ================== СЛОВА-ТРИГГЕРЫ ==================
@@ -373,6 +380,7 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
 
 
