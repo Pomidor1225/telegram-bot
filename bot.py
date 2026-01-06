@@ -30,7 +30,7 @@ Hub 18+:        https://t.me/+jTET-PYrLekzMGMy
 
 COMPLEX_WORDS = [
     # технологии / база
-    "блокчейн", "api", "апи", "application", "апликейшн",
+    "api", "апи", "application", "апликейшн",
     "нода", "валидатор", "тестнет", "мейннет",
     "хешрейт", "хэш", "хэши",
 
@@ -376,6 +376,7 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
 
 
