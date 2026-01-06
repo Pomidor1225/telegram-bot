@@ -264,28 +264,36 @@ async def handle_message(update, context):
         return
 
     # ===== поиск триггеров =====
-    words = text.split()
-    trigger_found = False
+words = text.split()
+trigger_found = False
 
-    for w in words:
-        w_norm = normalize_word(w)
-        if len(w_norm) < 5:
-            continue
+for msg_word in words:
 
-        for t in COMPLEX_WORDS:
-            t_norm = normalize_word(t)
-            if len(t_norm) < 5:
-                continue
+    msg_word_clean = msg_word.strip(".,!?():;\"'")
 
-            if is_similar(w_norm, t_norm):
+    # ---------- КОРОТКИЕ СЛОВА ----------
+    if len(msg_word_clean) <= 5:
+        for trigger in COMPLEX_WORDS:
+            if msg_word_clean == trigger:
                 trigger_found = True
                 break
 
-        if trigger_found:
-            break
+    # ---------- ДЛИННЫЕ СЛОВА ----------
+    else:
+        msg_norm = normalize_word(msg_word_clean)
 
-    if not trigger_found:
-        return
+        for trigger in COMPLEX_WORDS:
+            trg_norm = normalize_word(trigger)
+
+            if is_similar(msg_norm, trg_norm):
+                trigger_found = True
+                break
+
+    if trigger_found:
+        break
+
+if not trigger_found:
+    return
 
     # ===== кулдаун =====
     now = time.time()
@@ -316,6 +324,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
