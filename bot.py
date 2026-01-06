@@ -1,9 +1,12 @@
 import os
-from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters
 import random
 import time
+from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+# ================== НАСТРОЙКИ ==================
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")  # или вставь строкой
+
 START_TEXT = """================================
 VV SYSTEM BOT
 ================================
@@ -23,10 +26,9 @@ Hub 18+:        https://t.me/+jTET-PYrLekzMGMy
 ================================
 Добро пожаловать в экосистему VV.
 ================================
-
 """
 
-# ================== СЛОВА-ТРИГГЕРЫ ==================
+# ================== ТРИГГЕРЫ ==================
 
 COMPLEX_WORDS = [
     # технологии / база
@@ -173,88 +175,68 @@ COMPLEX_WORDS = [
     "гой", "гои", "гойство"
 ]
 
-# ================== ФРАЗЫ ОТВЕТА ==================
-
 RANDOM_PHRASES = [
     "Бро, ты слишком сложно объясняешь — о чём вообще речь?",
-    "Я что-то вообще не понял, можешь проще?",
-    "Это сейчас на каком языке было?",
-    "Ты меня потерял уже на середине сообщения.",
+    "Я вообще не понял, можешь проще?",
     "Переведи с умного на человеческий.",
     "Честно — ноль понимания.",
+    "Можно для чайников?",
+    "Я потерялся, повтори попроще.
+    "Это сейчас на каком языке было?",
+    "Ты меня потерял уже на середине сообщения.",
     "Я не улавливаю мысль, поясни.",
     "Слишком завуалировано, скажи прямо.",
     "Ты о чём конкретно?",
     "Много слов, а смысл где?",
     "Я не понял, к чему ты ведёшь.",
     "Можно для чайников?",
-    "Звучит красиво, но непонятно.",
-    "Объясни, будто мне 5 лет.",
-    "Я читаю, но смысл не доходит.",
-    "Что-то ты намудрил.",
-    "Я выпал, повтори по-простому.",
-    "Мы сейчас об одном и том же говорим?",
-    "Слишком абстрактно, конкретнее можно?",
-    "Я вообще не врубаюсь, если честно."
+    "Звучит красиво, но непонятно.","
 ]
 
-# ================== ЛОГИКА ==================
+# ================== СЛУЖЕБНОЕ ==================
 
 last_reply_time = {}
 
-async def start_command(update, context):
-    chat = update.effective_chat
-
-    # Работаем только в личке
-    if chat.type != "private":
-        return
-
-    await update.message.reply_text(START_TEXT)
-
-def normalize_word(word):
+def normalize_word(word: str) -> str:
     endings = [
         "ами", "ями", "ого", "ему", "ыми", "ими",
-        "ить", "ать", "ять", "нуть",
-        "ился", "илась", "ились",
-        "ил", "ила", "или",
-        "нул", "нула", "нуло",
+        "ить", "ать", "ять",
         "а", "я", "ы", "и", "е", "о", "у",
         "ов", "ев", "ей",
         "ый", "ий", "ая", "ое", "ее"
     ]
 
-    for ending in endings:
-        if word.endswith(ending) and len(word) > len(ending) + 2:
-            return word[:-len(ending)]
+    for e in endings:
+        if word.endswith(e) and len(word) > len(e) + 2:
+            return word[:-len(e)]
 
     return word
 
-def is_similar(word1, word2):
-    if abs(len(word1) - len(word2)) > 1:
+def is_similar(a: str, b: str) -> bool:
+    if abs(len(a) - len(b)) > 1:
         return False
 
     mismatches = 0
     i = j = 0
 
-    while i < len(word1) and j < len(word2):
-        if word1[i] == word2[j]:
+    while i < len(a) and j < len(b):
+        if a[i] == b[j]:
             i += 1
             j += 1
         else:
             mismatches += 1
             if mismatches > 1:
                 return False
-            if len(word1) > len(word2):
-                i += 1
-            elif len(word2) > len(word1):
-                j += 1
-            else:
-                i += 1
-                j += 1
+            i += 1
+            j += 1
 
     return True
 
+# ================== ХЕНДЛЕРЫ ==================
 
+async def start_command(update, context):
+    if update.effective_chat.type == "private":
+        await update.message.reply_text(START_TEXT)
 
 async def handle_message(update, context):
 
@@ -262,123 +244,80 @@ async def handle_message(update, context):
         return
 
     text = update.message.text.lower()
+    chat = update.effective_chat
 
-     # ================== ПАСХАЛКИ ==================
-
-    # 1. 🤯 реакция на "помидор"
-    if "помидор" in text:
-        try:
-            await context.bot.set_message_reaction(
-                chat_id=update.effective_chat.id,
-                message_id=update.message.message_id,
-                reaction=["🤯"]
-            )
-        except:
-            pass  # если реакции недоступны — просто молчим
-            
-            # 2. "помидорас"
+    # ===== пасхалки =====
     if "помидорас" in text:
         await update.message.reply_text("Сам ты помидорас")
         return
 
-    # 3. "соси"
     if "соси" in text:
         await update.message.reply_text("а соси соси мне за 5$ не сделаешь?")
         return
 
-    # 4. "шнеле"
-    if "шнеле" in text:
-        await update.message.reply_text("фо вотафо")
-        return
-        
-        # 5. "гениальный токен"
-    if "гениальный токен" in text:
-        await update.message.reply_text("pepemp3")
-        return
-
-    # 6. "пупсик"
     if "пупсик" in text:
         await update.message.reply_text("главный пупсик здесь я")
         return
 
-    # ================== ДОП ПАСХАЛКИ ==================
-
-    clean_text = text.strip()
-
-    # 1. Контракт (ТОЧНОЕ СООБЩЕНИЕ)
-    if clean_text in ["contract", "контракт", "со", "co"]:
-        await update.message.reply_text(
-            "$VSPACE : EQAOL6ScfHq7B0IRSpVuzxZQ4W3jjrppgRFzWT7kUljbMs_v"
-        )
-        return
-
-    # 2. "привет медвед молодёжь" — шанс 11.25%
-    if "привет медвед молодёжь" in text:
-        if random.random() < 0.1125:
-            await update.message.reply_text("дарова плесень")
-        return
-
-    chat = update.effective_chat
-
-    # Только группы
+    # ===== только группы =====
     if chat.type not in ["group", "supergroup"]:
         return
 
-    text = update.message.text.lower()
+    # ===== поиск триггеров =====
+    words = text.split()
+    trigger_found = False
 
-    # Проверка на триггеры
-words_in_message = text.split()
-trigger_found = False
-
-for msg_word in words_in_message:
-    msg_norm = normalize_word(msg_word)
-
-    if len(msg_norm) < 5:
-        continue
-
-    for trigger_word in COMPLEX_WORDS:
-        trg_norm = normalize_word(trigger_word)
-
-        if len(trg_norm) < 5:
+    for w in words:
+        w_norm = normalize_word(w)
+        if len(w_norm) < 5:
             continue
 
-        if is_similar(msg_norm, trg_norm):
-            trigger_found = True
+        for t in COMPLEX_WORDS:
+            t_norm = normalize_word(t)
+            if len(t_norm) < 5:
+                continue
+
+            if is_similar(w_norm, t_norm):
+                trigger_found = True
+                break
+
+        if trigger_found:
             break
 
-    if trigger_found:
-        break
+    if not trigger_found:
+        return
 
-if not trigger_found:
-    return
-
-        
-    
-    chat_id = chat.id
+    # ===== кулдаун =====
     now = time.time()
+    cid = chat.id
 
-    # Кулдаун 60 секунд
-    if chat_id in last_reply_time:
-        if now - last_reply_time[chat_id] < 60:
-            return
+    if cid in last_reply_time and now - last_reply_time[cid] < 60:
+        return
 
-    # Шанс ответа 70%
     if random.random() > 0.7:
         return
 
     await update.message.reply_text(random.choice(RANDOM_PHRASES))
-    last_reply_time[chat_id] = now
-
+    last_reply_time[cid] = now
 
 # ================== ЗАПУСК ==================
 
-app = ApplicationBuilder().token(BOT_TOKEN).build()
+def main():
+    if not BOT_TOKEN:
+        raise RuntimeError("BOT_TOKEN не задан")
 
-app.add_handler(CommandHandler("start", start_command))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", start_command))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+    print("✅ Бот запущен")
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
 
 
-app.run_polling()
 
 
 
