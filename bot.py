@@ -257,7 +257,12 @@ def is_similar(word1, word2):
 
 
 async def handle_message(update, context):
+
+    if not update.message or not update.message.text:
+        return
+
     text = update.message.text.lower()
+
      # ================== ПАСХАЛКИ ==================
 
     # 1. 🤯 реакция на "помидор"
@@ -325,34 +330,26 @@ async def handle_message(update, context):
 
     words_in_message = text.split()
     trigger_found = False
+for msg_word in words_in_message:
+    msg_norm = normalize_word(msg_word)
 
-    for msg_word in words_in_message:
-        for trigger_word in COMPLEX_WORDS:
+    if len(msg_norm) < 5:
+        continue
 
-           msg_norm = normalize_word(msg_word)
-trg_norm = normalize_word(trigger_word)
+    for trigger_word in COMPLEX_WORDS:
+        trg_norm = normalize_word(trigger_word)
 
-# 🔒 слишком короткие — игнорируем
-if len(msg_norm) < 5 or len(trg_norm) < 5:
-    continue
+        if len(trg_norm) < 5:
+            continue
 
-# длинные — fuzzy
-if is_similar(msg_norm, trg_norm):
-    trigger_found = True
-    break
-
-            # длинные слова — без окончаний + 1 ошибка
-            else:
-                if is_similar(
-                    normalize_word(msg_word),
-                    normalize_word(trigger_word)
-                ):
-                    trigger_found = True
-                    break
-
-        if trigger_found:
+        if is_similar(msg_norm, trg_norm):
+            trigger_found = True
             break
 
+    if trigger_found:
+        break
+
+   
     if not trigger_found:
         return
         
@@ -382,6 +379,7 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
 
 
