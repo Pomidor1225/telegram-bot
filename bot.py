@@ -263,37 +263,37 @@ async def handle_message(update, context):
     if chat.type not in ["group", "supergroup"]:
         return
 
-    # ===== поиск триггеров =====
-words = text.split()
-trigger_found = False
+       # ===== поиск триггеров =====
+    words = text.split()
+    trigger_found = False
 
-for msg_word in words:
+    for msg_word in words:
 
-    msg_word_clean = msg_word.strip(".,!?():;\"'")
+        msg_word_clean = msg_word.strip(".,!?():;\"'")
 
-    # ---------- КОРОТКИЕ СЛОВА ----------
-    if len(msg_word_clean) <= 5:
-        for trigger in COMPLEX_WORDS:
-            if msg_word_clean == trigger:
-                trigger_found = True
-                break
+        # ---------- КОРОТКИЕ СЛОВА ----------
+        if len(msg_word_clean) <= 5:
+            for trigger in COMPLEX_WORDS:
+                if msg_word_clean == trigger:
+                    trigger_found = True
+                    break
 
-    # ---------- ДЛИННЫЕ СЛОВА ----------
-    else:
-        msg_norm = normalize_word(msg_word_clean)
+        # ---------- ДЛИННЫЕ СЛОВА ----------
+        else:
+            msg_norm = normalize_word(msg_word_clean)
 
-        for trigger in COMPLEX_WORDS:
-            trg_norm = normalize_word(trigger)
+            for trigger in COMPLEX_WORDS:
+                trg_norm = normalize_word(trigger)
 
-            if is_similar(msg_norm, trg_norm):
-                trigger_found = True
-                break
+                if is_similar(msg_norm, trg_norm):
+                    trigger_found = True
+                    break
 
-    if trigger_found:
-        break
+        if trigger_found:
+            break
 
-if not trigger_found:
-    return
+    if not trigger_found:
+        return
 
     # ===== кулдаун =====
     now = time.time()
@@ -324,6 +324,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
