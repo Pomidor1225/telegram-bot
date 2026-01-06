@@ -329,11 +329,17 @@ async def handle_message(update, context):
     for msg_word in words_in_message:
         for trigger_word in COMPLEX_WORDS:
 
-            # короткие слова — только точное совпадение
-            if len(trigger_word) <= 5:
-                if msg_word == trigger_word:
-                    trigger_found = True
-                    break
+           msg_norm = normalize_word(msg_word)
+trg_norm = normalize_word(trigger_word)
+
+# 🔒 слишком короткие — игнорируем
+if len(msg_norm) < 5 or len(trg_norm) < 5:
+    continue
+
+# длинные — fuzzy
+if is_similar(msg_norm, trg_norm):
+    trigger_found = True
+    break
 
             # длинные слова — без окончаний + 1 ошибка
             else:
@@ -376,6 +382,7 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
 
 
