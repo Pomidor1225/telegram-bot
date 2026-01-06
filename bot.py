@@ -327,9 +327,9 @@ async def handle_message(update, context):
     text = update.message.text.lower()
 
     # Проверка на триггеры
+words_in_message = text.split()
+trigger_found = False
 
-    words_in_message = text.split()
-    trigger_found = False
 for msg_word in words_in_message:
     msg_norm = normalize_word(msg_word)
 
@@ -349,9 +349,9 @@ for msg_word in words_in_message:
     if trigger_found:
         break
 
-   
-    if not trigger_found:
-        return
+if not trigger_found:
+    return
+
         
     
     chat_id = chat.id
@@ -379,6 +379,7 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
 
 app.run_polling()
+
 
 
 
